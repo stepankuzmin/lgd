@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_lgd.ui'
 #
-# Created: Sun Jan 20 23:03:27 2013
+# Created: Mon Jan 21 01:16:19 2013
 #      by: PyQt4 UI code generator 4.9.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,12 +17,34 @@ except AttributeError:
 class Ui_lgd(object):
     def setupUi(self, lgd):
         lgd.setObjectName(_fromUtf8("lgd"))
-        lgd.resize(400, 300)
+        lgd.resize(600, 450)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(lgd)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.querySettingsGroupBox = QtGui.QGroupBox(lgd)
+        self.querySettingsGroupBox.setObjectName(_fromUtf8("querySettingsGroupBox"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.querySettingsGroupBox)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.endpointLabel = QtGui.QLabel(self.querySettingsGroupBox)
+        self.endpointLabel.setObjectName(_fromUtf8("endpointLabel"))
+        self.verticalLayout.addWidget(self.endpointLabel)
+        self.endpointLineEdit = QtGui.QLineEdit(self.querySettingsGroupBox)
+        self.endpointLineEdit.setObjectName(_fromUtf8("endpointLineEdit"))
+        self.verticalLayout.addWidget(self.endpointLineEdit)
+        self.queryLabel = QtGui.QLabel(self.querySettingsGroupBox)
+        self.queryLabel.setObjectName(_fromUtf8("queryLabel"))
+        self.verticalLayout.addWidget(self.queryLabel)
+        self.queryPlainTextEdit = QtGui.QPlainTextEdit(self.querySettingsGroupBox)
+        self.queryPlainTextEdit.setObjectName(_fromUtf8("queryPlainTextEdit"))
+        self.verticalLayout.addWidget(self.queryPlainTextEdit)
+        self.queryPushButton = QtGui.QPushButton(self.querySettingsGroupBox)
+        self.queryPushButton.setObjectName(_fromUtf8("queryPushButton"))
+        self.verticalLayout.addWidget(self.queryPushButton)
+        self.verticalLayout_2.addWidget(self.querySettingsGroupBox)
         self.buttonBox = QtGui.QDialogButtonBox(lgd)
-        self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.verticalLayout_2.addWidget(self.buttonBox)
 
         self.retranslateUi(lgd)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), lgd.accept)
@@ -30,5 +52,19 @@ class Ui_lgd(object):
         QtCore.QMetaObject.connectSlotsByName(lgd)
 
     def retranslateUi(self, lgd):
-        lgd.setWindowTitle(QtGui.QApplication.translate("lgd", "lgd", None, QtGui.QApplication.UnicodeUTF8))
+        lgd.setWindowTitle(QtGui.QApplication.translate("lgd", "LinkedGeoData query tool", None, QtGui.QApplication.UnicodeUTF8))
+        self.querySettingsGroupBox.setTitle(QtGui.QApplication.translate("lgd", "Query", None, QtGui.QApplication.UnicodeUTF8))
+        self.endpointLabel.setText(QtGui.QApplication.translate("lgd", "SPARQL Endpoint", None, QtGui.QApplication.UnicodeUTF8))
+        self.endpointLineEdit.setText(QtGui.QApplication.translate("lgd", "http://linkedgeodata.org/sparql", None, QtGui.QApplication.UnicodeUTF8))
+        self.queryLabel.setText(QtGui.QApplication.translate("lgd", "Query text", None, QtGui.QApplication.UnicodeUTF8))
+        self.queryPlainTextEdit.setPlainText(QtGui.QApplication.translate("lgd", "Prefix lgdo: <http://linkedgeodata.org/ontology/>\n"
+"Select *\n"
+"From <http://linkedgeodata.org>\n"
+"{\n"
+"    ?s a lgdo:Amenity .\n"
+"    ?s rdfs:label ?l .\n"
+"    ?s geo:geometry ?g .\n"
+"    Filter(bif:st_intersects (?g, bif:st_point (56.833333, 60.583333), 1000)) .\n"
+"} LIMIT 10", None, QtGui.QApplication.UnicodeUTF8))
+        self.queryPushButton.setText(QtGui.QApplication.translate("lgd", "Run query", None, QtGui.QApplication.UnicodeUTF8))
 

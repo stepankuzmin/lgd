@@ -1,33 +1,82 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>lgd</class>
- <widget class="QDialog" name="lgd" >
-  <property name="geometry" >
+ <widget class="QDialog" name="lgd">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>600</width>
+    <height>450</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>lgd</string>
+  <property name="windowTitle">
+   <string>LinkedGeoData query tool</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="querySettingsGroupBox">
+     <property name="title">
+      <string>Query</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="endpointLabel">
+        <property name="text">
+         <string>SPARQL Endpoint</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="endpointLineEdit">
+        <property name="text">
+         <string>http://linkedgeodata.org/sparql</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="queryLabel">
+        <property name="text">
+         <string>Query text</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="queryPlainTextEdit">
+        <property name="plainText">
+         <string>Prefix lgdo: &lt;http://linkedgeodata.org/ontology/&gt;
+Select *
+From &lt;http://linkedgeodata.org&gt;
+{
+    ?s a lgdo:Amenity .
+    ?s rdfs:label ?l .
+    ?s geo:geometry ?g .
+    Filter(bif:st_intersects (?g, bif:st_point (56.833333, 60.583333), 1000)) .
+} LIMIT 10</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="queryPushButton">
+        <property name="text">
+         <string>Run query</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
@@ -37,11 +86,11 @@
    <receiver>lgd</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -53,11 +102,11 @@
    <receiver>lgd</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

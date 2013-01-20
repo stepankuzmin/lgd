@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
+import sparql
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
@@ -64,6 +65,7 @@ class lgd:
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.action)
         self.iface.addPluginToMenu(u"&LinkedGeoData", self.action)
+        QObject.connect(self.dlg.ui.queryPushButton, SIGNAL("clicked()"), self.runQuery)
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -81,3 +83,25 @@ class lgd:
             # do something useful (delete the line containing pass and
             # substitute with your code)
             pass
+
+    def runQuery(self):
+      endpoint = str(self.dlg.ui.endpointLineEdit.text())
+      query = str(self.dlg.ui.queryPlainTextEdit.toPlainText())
+      result = sparql.query(endpoint, query)
+
+      vl = QgsVectorLayer("Point", "temporary_points", "memory")
+      pr = vl.dataProvider()
+      vl.startEditing()
+
+      pr.addAttributes([QgsField(result.variables[0], QVariant.String), QgsField(result.variables[1],  QVariant.String)])
+
+      for row in result:
+        values = sparql.unpack_row(row)
+        fet = QgsFeature()
+        fet.setGeometry(QgsGeometry.fromWkt(values[2]))
+        fet.setAttributeMap({0 : QVariant(values[0]), 1 : QVariant(values[1])})
+        pr.addFeatures([fet])
+      
+      vl.commitChanges()
+      vl.updateExtents()
+      QgsMapLayerRegistry.instance().addMapLayer(vl)
