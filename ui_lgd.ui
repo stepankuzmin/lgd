@@ -7,13 +7,36 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>450</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LinkedGeoData query tool</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="layerSettingsGroupBox">
+     <property name="title">
+      <string>Layer settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QLabel" name="layerNameLabel">
+        <property name="text">
+         <string>Layer name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="layerNameLineEdit">
+        <property name="text">
+         <string>LinkedGeoDataLayer</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="querySettingsGroupBox">
      <property name="title">
@@ -44,9 +67,9 @@
       <item>
        <widget class="QPlainTextEdit" name="queryPlainTextEdit">
         <property name="plainText">
-         <string>Prefix lgdo: &lt;http://linkedgeodata.org/ontology/&gt;
-Select *
-From &lt;http://linkedgeodata.org&gt;
+         <string>PREFIX lgdo: &lt;http://linkedgeodata.org/ontology/&gt;
+SELECT *
+FROM &lt;http://linkedgeodata.org&gt;
 {
     ?s a lgdo:Amenity .
     ?s rdfs:label ?l .

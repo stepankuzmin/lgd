@@ -19,13 +19,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
+
+import re
+
+# Import plugin dependencies
 import sparql
+from fyzz.yappsparser import parse
+
+import rdfextras
+from rdfextras.sparql import parser
+
+# Import the PyQt and QGIS libraries
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
+
 # Initialize Qt resources from file resources.py
 import resources_rc
+
 # Import the code for the dialog
 from lgddialog import lgdDialog
 
@@ -53,6 +64,23 @@ class lgd:
 
         # Create the dialog (after translation) and keep reference
         self.dlg = lgdDialog()
+        
+        self.parsers = {}
+        self.parsers['point'] = self.Point
+        self.parsers['linestring'] = self.LineString
+        self.parsers['polygon'] = self.Polygon
+        
+    def Point(self, layerName):
+      print "Make point layer"
+      return QgsVectorLayer("Point", layerName, "memory")
+
+    def LineString(self, layerName):
+      print "Make linestring layer"
+      return QgsVectorLayer("Line", layerName, "memory")
+
+    def Polygon(self, layerName):
+      print "Make poligon layer"
+      return QgsVectorLayer("Polygon", layerName, "memory")
 
     def initGui(self):
         # Create action that will start plugin configuration
@@ -85,23 +113,82 @@ class lgd:
             pass
 
     def runQuery(self):
+      layerName = str(self.dlg.ui.layerNameLineEdit.text())
       endpoint = str(self.dlg.ui.endpointLineEdit.text())
       query = str(self.dlg.ui.queryPlainTextEdit.toPlainText())
-      result = sparql.query(endpoint, query)
 
-      vl = QgsVectorLayer("Point", "temporary_points", "memory")
-      pr = vl.dataProvider()
-      vl.startEditing()
+      #ast = parse(query)
+      #print ast.where
 
-      pr.addAttributes([QgsField(result.variables[0], QVariant.String), QgsField(result.variables[1],  QVariant.String)])
+#      triples = rdfextras.sparql.parser.parse(query).query.whereClause.parsedGraphPattern.triples
+#
+#      for triple in triples:
+#        for propVal in triple.propVals:
+#          for obj in propVal.objects:
+#            print "object: ", obj.title(), "type: ", type(obj.title())
+#        print "property: ", propVal.property.title(), "type: ", type(propVal.property.title())
+#
+#        # Is there any geometry field?
+#        if propVal.property.title() == u"Geo:Geometry":
+#          print obj.title(), " is Geo:Geometry!"
+#
+#      result = sparql.query(endpoint, query)
 
-      for row in result:
-        values = sparql.unpack_row(row)
-        fet = QgsFeature()
-        fet.setGeometry(QgsGeometry.fromWkt(values[2]))
-        fet.setAttributeMap({0 : QVariant(values[0]), 1 : QVariant(values[1])})
-        pr.addFeatures([fet])
+      pattern = re.compile('^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$')
       
-      vl.commitChanges()
-      vl.updateExtents()
-      QgsMapLayerRegistry.instance().addMapLayer(vl)
+      result = sparql.query(endpoint, query).fetchall()
+      firstRow = sparql.unpack_row(result[0])
+
+      # Define geometry field
+      for index in range(len(firstRow)):
+        matches = pattern.match(firstRow[index])
+        if matches:
+          geometryType, geometry = matches.groups() # something like erlang's _ instead of geometry
+          geometryType = geometryType.lower().strip()
+          try:
+            layer = self.parsers[geometryType](layerName)
+            geometryIndex = index
+
+            pr = layer.dataProvider()
+            layer.startEditing()
+            
+            for row in result:
+              values = sparql.unpack_row(row)
+              fet = QgsFeature()
+              fet.setGeometry(QgsGeometry.fromWkt(values[index]))
+              #fet.setAttributeMap() # Add attributes to all Geometry layers?
+              pr.addFeatures([fet])
+
+            layer.commitChanges()
+            layer.updateExtents()
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
+          except KeyError:
+            raise NotImplementedError, "Unsupported WKT Type: %s" % geometryType # + QMessageBox
+
+
+      #rows = result.fetchall()
+      #for row in rows:
+      #  values = sparql.unpack_row(row)
+      #  for value in values:
+      #    matches = pattern.match(value)
+      #    if matches:
+      #      geometryType, geometry = matches.groups() # something like erlang's _ instead of geometry
+      #      geometryType = geometryType.lower().strip()
+
+
+      #vl = QgsVectorLayer("Point", layerName, "memory")
+      #pr = vl.dataProvider()
+      #vl.startEditing()
+
+      #pr.addAttributes([QgsField(result.variables[0], QVariant.String), QgsField(result.variables[1],  QVariant.String)])
+
+      #for row in result:
+      #  values = sparql.unpack_row(row)
+      #  fet = QgsFeature()
+      #  fet.setGeometry(QgsGeometry.fromWkt(values[2]))
+      #  fet.setAttributeMap({0 : QVariant(values[0]), 1 : QVariant(values[1])})
+      #  pr.addFeatures([fet])
+     # 
+     # vl.commitChanges()
+     # vl.updateExtents()
+     # QgsMapLayerRegistry.instance().addMapLayer(vl)

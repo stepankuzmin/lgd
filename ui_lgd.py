@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_lgd.ui'
 #
-# Created: Mon Jan 21 01:16:19 2013
+# Created: Tue Jan 22 22:16:01 2013
 #      by: PyQt4 UI code generator 4.9.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,9 +17,20 @@ except AttributeError:
 class Ui_lgd(object):
     def setupUi(self, lgd):
         lgd.setObjectName(_fromUtf8("lgd"))
-        lgd.resize(600, 450)
+        lgd.resize(600, 500)
         self.verticalLayout_2 = QtGui.QVBoxLayout(lgd)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.layerSettingsGroupBox = QtGui.QGroupBox(lgd)
+        self.layerSettingsGroupBox.setObjectName(_fromUtf8("layerSettingsGroupBox"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.layerSettingsGroupBox)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.layerNameLabel = QtGui.QLabel(self.layerSettingsGroupBox)
+        self.layerNameLabel.setObjectName(_fromUtf8("layerNameLabel"))
+        self.verticalLayout_3.addWidget(self.layerNameLabel)
+        self.layerNameLineEdit = QtGui.QLineEdit(self.layerSettingsGroupBox)
+        self.layerNameLineEdit.setObjectName(_fromUtf8("layerNameLineEdit"))
+        self.verticalLayout_3.addWidget(self.layerNameLineEdit)
+        self.verticalLayout_2.addWidget(self.layerSettingsGroupBox)
         self.querySettingsGroupBox = QtGui.QGroupBox(lgd)
         self.querySettingsGroupBox.setObjectName(_fromUtf8("querySettingsGroupBox"))
         self.verticalLayout = QtGui.QVBoxLayout(self.querySettingsGroupBox)
@@ -53,13 +64,16 @@ class Ui_lgd(object):
 
     def retranslateUi(self, lgd):
         lgd.setWindowTitle(QtGui.QApplication.translate("lgd", "LinkedGeoData query tool", None, QtGui.QApplication.UnicodeUTF8))
+        self.layerSettingsGroupBox.setTitle(QtGui.QApplication.translate("lgd", "Layer settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.layerNameLabel.setText(QtGui.QApplication.translate("lgd", "Layer name", None, QtGui.QApplication.UnicodeUTF8))
+        self.layerNameLineEdit.setText(QtGui.QApplication.translate("lgd", "LinkedGeoDataLayer", None, QtGui.QApplication.UnicodeUTF8))
         self.querySettingsGroupBox.setTitle(QtGui.QApplication.translate("lgd", "Query", None, QtGui.QApplication.UnicodeUTF8))
         self.endpointLabel.setText(QtGui.QApplication.translate("lgd", "SPARQL Endpoint", None, QtGui.QApplication.UnicodeUTF8))
         self.endpointLineEdit.setText(QtGui.QApplication.translate("lgd", "http://linkedgeodata.org/sparql", None, QtGui.QApplication.UnicodeUTF8))
         self.queryLabel.setText(QtGui.QApplication.translate("lgd", "Query text", None, QtGui.QApplication.UnicodeUTF8))
-        self.queryPlainTextEdit.setPlainText(QtGui.QApplication.translate("lgd", "Prefix lgdo: <http://linkedgeodata.org/ontology/>\n"
-"Select *\n"
-"From <http://linkedgeodata.org>\n"
+        self.queryPlainTextEdit.setPlainText(QtGui.QApplication.translate("lgd", "PREFIX lgdo: <http://linkedgeodata.org/ontology/>\n"
+"SELECT *\n"
+"FROM <http://linkedgeodata.org>\n"
 "{\n"
 "    ?s a lgdo:Amenity .\n"
 "    ?s rdfs:label ?l .\n"
