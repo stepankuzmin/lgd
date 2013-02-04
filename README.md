@@ -2,6 +2,5 @@ LGD is a [LinkedGeoData](http://linkedgeodata.org/) SPARQL query tool for [Quant
 
 Dependencies:
 
-* [Yapps2](http://pypi.python.org/pypi/Yapps2)
-* [fyzz](http://pypi.python.org/pypi/fyzz)
+* [RDFExtras](http://pypi.python.org/pypi/rdfextras)
 * [sparql-client](http://pypi.python.org/pypi/sparql-client)

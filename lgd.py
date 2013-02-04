@@ -24,7 +24,6 @@ import re
 
 # Import plugin dependencies
 import sparql
-from fyzz.yappsparser import parse
 
 import rdfextras
 from rdfextras.sparql import parser
