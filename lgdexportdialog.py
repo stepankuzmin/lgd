@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- lgd
+ lgdExportDialog
                                  A QGIS plugin
- Linked geodata tool
+ LinkedGeoData tool
                              -------------------
         begin                : 2013-04-28
         copyright            : (C) 2013 by Stepan Kuzmin
@@ -18,39 +18,16 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
- This script initializes the plugin, making it known to QGIS.
 """
 
-
-def name():
-    return "LinkedGeoData"
-
-
-def description():
-    return "LinkedGeoData tool"
+from PyQt4 import QtCore, QtGui
+from ui_export import Ui_exportDialog
+# create the dialog for zoom to point
 
 
-def version():
-    return "Version 0.1"
-
-
-def icon():
-    return "icon.png"
-
-
-def qgisMinimumVersion():
-    return "1.8"
-
-def author():
-    return "Stepan Kuzmin"
-
-def email():
-    return "to.stepan.kuzmin@gmail.com"
-
-def category():
-  return "Web"
-
-def classFactory(iface):
-    # load lgd class from file lgd
-    from lgd import lgd
-    return lgd(iface)
+class lgdExportDialog(QtGui.QDialog):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_exportDialog()
+        self.ui.setupUi(self)

@@ -1,9 +1,9 @@
 #/***************************************************************************
 # lgd
 # 
-# A LinkedGeoData SPARQL query tool
+# Linked geodata tool
 #                             -------------------
-#        begin                : 2013-01-20
+#        begin                : 2013-04-28
 #        copyright            : (C) 2013 by Stepan Kuzmin
 #        email                : to.stepan.kuzmin@gmail.com
 # ***************************************************************************/
@@ -23,7 +23,7 @@ PLUGIN_UPLOAD = $(CURDIR)/plugin_upload.py
 # Makefile for a PyQGIS plugin 
 
 # translation
-SOURCES = lgd.py ui_lgd.py __init__.py lgddialog.py
+SOURCES = lgd.py ui_import.py ui_export.py __init__.py lgdimportdialog.py lgdexportdialog.py
 #TRANSLATIONS = i18n/lgd_en.ts
 TRANSLATIONS = 
 
@@ -31,11 +31,11 @@ TRANSLATIONS =
 
 PLUGINNAME = lgd
 
-PY_FILES = lgd.py lgddialog.py __init__.py
+PY_FILES = lgd.py lgddialog.py lgdimportdialog.py lgdexportdialog.py __init__.py
 
 EXTRAS = icon.png 
 
-UI_FILES = ui_lgd.py
+UI_FILES = ui_lgd.py ui_import.py ui_export.py
 
 RESOURCE_FILES = resources_rc.py
 
