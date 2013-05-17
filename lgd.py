@@ -29,6 +29,7 @@ import resources_rc
 from lgdimportdialog import lgdImportDialog
 from lgdexportdialog import lgdExportDialog
 
+import sparql
 
 class lgd:
 
@@ -93,6 +94,7 @@ class lgd:
       self.importDialog.show()
       result = self.importDialog.exec_()
       if result == 1:
+        print "okay"
         pass
 
     def exportLGD(self):

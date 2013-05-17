@@ -35,7 +35,7 @@ PY_FILES = lgd.py lgddialog.py lgdimportdialog.py lgdexportdialog.py __init__.py
 
 EXTRAS = icon.png 
 
-UI_FILES = ui_lgd.py ui_import.py ui_export.py
+UI_FILES = ui_import.py ui_export.py
 
 RESOURCE_FILES = resources_rc.py
 
