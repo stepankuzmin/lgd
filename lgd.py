@@ -3,9 +3,9 @@
 /***************************************************************************
  lgd
                                  A QGIS plugin
- A LinkedGeoData SPARQL query tool
+ Linked geodata tool
                               -------------------
-        begin                : 2013-01-20
+        begin                : 2013-04-28
         copyright            : (C) 2013 by Stepan Kuzmin
         email                : to.stepan.kuzmin@gmail.com
  ***************************************************************************/
@@ -32,13 +32,13 @@ from rdfextras.sparql import parser
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
-
 # Initialize Qt resources from file resources.py
 import resources_rc
-
 # Import the code for the dialog
-from lgddialog import lgdDialog
+from lgdimportdialog import lgdImportDialog
+from lgdexportdialog import lgdExportDialog
 
+import sparql
 
 class lgd:
 
@@ -62,125 +62,52 @@ class lgd:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = lgdDialog()
-        
-        self.parsers = {}
-        self.parsers['point'] = self.Point
-        self.parsers['linestring'] = self.LineString
-        self.parsers['polygon'] = self.Polygon
-        
-    def Point(self, layerName):
-      return QgsVectorLayer("Point", layerName, "memory")
-
-    def LineString(self, layerName):
-      return QgsVectorLayer("Line", layerName, "memory")
-
-    def Polygon(self, layerName):
-      return QgsVectorLayer("Polygon", layerName, "memory")
+        self.importDialog = lgdImportDialog()
+        self.exportDialog = lgdExportDialog()
 
     def initGui(self):
         # Create action that will start plugin configuration
-        self.action = QAction(
-            QIcon(":/plugins/lgd/icon.png"),
-            u"LinkedGeoData query tool", self.iface.mainWindow())
-        # connect the action to the run method
-        QObject.connect(self.action, SIGNAL("triggered()"), self.run)
+        self.importAction = QAction(QIcon(":/plugins/lgd/icon.png"), u"Import", self.iface.mainWindow())
+        self.exportAction = QAction(QIcon(":/plugins/lgd/icon.png"), u"Export", self.iface.mainWindow())
 
-        # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu(u"&LinkedGeoData", self.action)
-        QObject.connect(self.dlg.ui.queryPushButton, SIGNAL("clicked()"), self.runQuery)
+        # connect the actions to the methods
+        QObject.connect(self.importAction, SIGNAL("triggered()"), self.importLGD)
+        QObject.connect(self.exportAction, SIGNAL("triggered()"), self.exportLGD)
+
+        # Add the plugin menu item and icon
+        if hasattr(self.iface, "addPluginToWebMenu"):
+          self.iface.addWebToolBarIcon(self.importAction)
+          self.iface.addWebToolBarIcon(self.exportAction)
+          self.iface.addPluginToWebMenu("&LinkedGeoData", self.importAction)
+          self.iface.addPluginToWebMenu("&LinkedGeoData", self.exportAction)
+        else:
+          self.iface.addToolBarIcon(self.importAction)
+          self.iface.addToolBarIcon(self.exportAction)
+          self.iface.addPluginToMenu("&LinkedGeoData", self.importAction)
+          self.iface.addPluginToMenu("&LinkedGeoData", self.exportAction)
 
     def unload(self):
         # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&LinkedGeoData", self.action)
-        self.iface.removeToolBarIcon(self.action)
+        if hasattr(self.iface, "addPluginToRasterMenu"):
+          self.iface.removePluginWebMenu("&LinkedGeoData", self.importAction);
+          self.iface.removePluginWebMenu("&LinkedGeoData", self.exportAction);
+          self.iface.removeWebToolBarIcon(self.importAction)
+          self.iface.removeWebToolBarIcon(self.exportAction)
+        else:
+          self.iface.removePluginMenu(u"&LinkedGeoData", self.importAction)
+          self.iface.removePluginMenu(u"&LinkedGeoData", self.exportAction)
+          self.iface.removeToolBarIcon(self.importAction)
+          self.iface.removeToolBarIcon(self.exportAction)
 
-    # run method that performs all the real work
-    def run(self):
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result == 1:
-            # do something useful (delete the line containing pass and
-            # substitute with your code)
-            pass
+    def importLGD(self):
+      self.importDialog.show()
+      result = self.importDialog.exec_()
+      if result == 1:
+        print "okay"
+        pass
 
-    def runQuery(self):
-      # Get input data
-      layerName = str(self.dlg.ui.layerNameLineEdit.text())
-      endpoint = str(self.dlg.ui.endpointLineEdit.text())
-      query = str(self.dlg.ui.queryPlainTextEdit.toPlainText())
-
-      # Predefine geometry field as None
-      # NB: How to deal with multiple geometry fields?
-      geometryField = None
-
-      # Parse SPARQL query to get Geo:Geometry field
-      triples = rdfextras.sparql.parser.parse(query).query.whereClause.parsedGraphPattern.triples
-      for triple in triples:
-        for propVal in triple.propVals:
-          for obj in propVal.objects:
-            # Is there any geometry field?
-            if propVal.property.title() == u"Geo:Geometry":
-              geometryField = obj.title().lower()
-
-      if geometryField is None:
-        QMessageBox.warning(self.iface.mainWindow(), "Warning", "There is no Geo:Geometry field in this query", QMessageBox.Ok)
-        return
-      
-      result = sparql.query(endpoint, query)
-      variables = result.variables
-      geometryFieldIndex = variables.index(geometryField)
-
-      geometry = []
-      attributes = []
-      result = result.fetchall()
-
-      # Get geometry and attributes
-      for row in result:
-        values = sparql.unpack_row(row)
-        geometry.append(values[geometryFieldIndex])
-        values.remove(values[geometryFieldIndex])
-        attributes.append(values)
-
-      # Determine layer geometry type
-      pattern = re.compile('^\s*([\w\s]+)\s*\(\s*(.*)\s*\)\s*$') # from OpenLayers WKT.js
-      matches = pattern.match(geometry[0])
-      if matches:
-        geometryType = matches.groups()[0]
-        geometryType = geometryType.lower().strip()
-        try:
-          # Create in-memory layer
-          layer = self.parsers[geometryType](layerName)
-          pr = layer.dataProvider()
-          layer.startEditing()
-          
-          # Layer attributes
-          layerAttributes = []
-          variables.remove(geometryField)
-          for index in range(len(attributes[0])):
-            layerAttributes.append(QgsField(variables[index], QVariant.String))
-          pr.addAttributes(layerAttributes)
-
-          # Add features to layer
-          for index in range(len(geometry)):
-            fet = QgsFeature()
-            fet.setGeometry(QgsGeometry.fromWkt(geometry[index]))
-
-            # Add feature attributes
-            fetAttr = {}
-            for subIndex in range(len(attributes[index])):
-              fetAttr[subIndex] = QVariant(attributes[index][subIndex])
-            fet.setAttributeMap(fetAttr)
-            pr.addFeatures([fet])
-
-          # Save and display layer
-          layer.commitChanges()
-          layer.updateExtents()
-          QgsMapLayerRegistry.instance().addMapLayer(layer)
-        except KeyError:
-          QMessageBox.warning(self.iface.mainWindow(), "Warning", "Unsupported WKT type %s" % geometryType, QMessageBox.Ok)
-          raise NotImplementedError, "Unsupported WKT type: %s" % geometryType
+    def exportLGD(self):
+      self.exportDialog.show()
+      result = self.exportDialog.exec_()
+      if result == 1:
+        pass

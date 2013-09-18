@@ -11,7 +11,8 @@
 [general]
 name=LinkedGeoData
 qgisMinimumVersion=1.8
-description=A LinkedGeoData SPARQL query tool
+description=LinkedGeoData tool
+category=Web
 version=0.1
 author=Stepan Kuzmin
 email=to.stepan.kuzmin@gmail.com
@@ -24,14 +25,14 @@ email=to.stepan.kuzmin@gmail.com
 # changelog=
 
 # tags are comma separated with spaces allowed
-tags=LinkedGeoData, SPARQL, Semantic Web, Geospatial Semantic Web
+tags=
 
 homepage=
-tracker=https://github.com/StepanKuzmin/lgd/issues
+tracker=
 repository=https://github.com/StepanKuzmin/lgd
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version
 deprecated=False

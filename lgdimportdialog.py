@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- lgdDialog
+ lgdImportDialog
                                  A QGIS plugin
- A LinkedGeoData SPARQL query tool
+ LinkedGeoData tool
                              -------------------
-        begin                : 2013-01-20
+        begin                : 2013-04-28
         copyright            : (C) 2013 by Stepan Kuzmin
         email                : to.stepan.kuzmin@gmail.com
  ***************************************************************************/
@@ -21,13 +21,13 @@
 """
 
 from PyQt4 import QtCore, QtGui
-from ui_lgd import Ui_lgd
-# create the dialog for zoom to point
+from ui_import import Ui_importDialog
+# create the import dialog
 
 
-class lgdDialog(QtGui.QDialog):
+class lgdImportDialog(QtGui.QDialog):
     def __init__(self):
         QtGui.QDialog.__init__(self)
         # Set up the user interface from Designer.
-        self.ui = Ui_lgd()
+        self.ui = Ui_importDialog()
         self.ui.setupUi(self)
